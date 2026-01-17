@@ -4,6 +4,7 @@ import User from '../User.model';
 export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
+        console.log('Login Request:', { email, password }); // LOGGING
 
         // Check for user
         const user = await User.findOne({ email }).select('+password');
@@ -31,5 +32,14 @@ export const loginUser = async (req: Request, res: Response) => {
 
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server Error', error });
+    }
+};
+
+export const getMe = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server Error', error: error });
     }
 };
