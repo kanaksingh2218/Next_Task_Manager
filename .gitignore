@@ -4,3 +4,8 @@
 **/.env
 **/.env.local
 **/.DS_Store
+*
+!src/**/*.js
+backend/src/**/*.js
+backend/src/**/*.d.ts
+backend/src/**/*.js.map
