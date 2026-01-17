@@ -1,27 +1,6 @@
-# Dependencies
-**/node_modules/
-
-# Next.js build
-**/.next/
-**/.env.local
-
-# Backend build
-**/dist/
-
-# OS files
-**/.DS_Store
-Thumbs.db
-
-# Compiled files in src - explicitly targeted
-*.js
-*.d.ts
-*.map
-
-# Re-include source files
-!*.ts
-!*.tsx
-!package.json
-!package-lock.json
-!tsconfig.json
-!.gitignore
-!README.md
+# Only ignore dependencies and build outputs
+node_modules/
+.next/
+dist/
+.env*
+.DS_Store
