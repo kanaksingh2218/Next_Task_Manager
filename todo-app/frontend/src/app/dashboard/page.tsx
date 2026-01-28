@@ -30,7 +30,7 @@ export default function DashboardPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
                     <Logo />
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-800">Hello, <b>{user.name}</b></span>
+                        <span className="text-sm text-gray-800">Hello, <b>{user.fullName}</b></span>
                         <button
                             onClick={logout}
                             className="text-sm font-medium text-gray-600 hover:text-red-700 transition-colors"

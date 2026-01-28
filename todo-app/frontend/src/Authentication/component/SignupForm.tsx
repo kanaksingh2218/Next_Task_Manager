@@ -9,7 +9,7 @@ import { Logo } from './Logo';
 export const SignupForm = () => {
     const { signup, loading: authLoading } = useAuth();
     const [formData, setFormData] = useState({
-        name: '',
+        fullName: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -29,12 +29,13 @@ export const SignupForm = () => {
         setLoading(true);
         try {
             await signup({
-                name: formData.name,
+                fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password
             });
         } catch (err: any) {
-            setError(err.message || 'Failed to sign up');
+            console.error('Signup Error:', err);
+            setError(err.response?.data?.message || err.message || 'Failed to sign up');
         } finally {
             setLoading(false);
         }
@@ -55,12 +56,13 @@ export const SignupForm = () => {
                     </div>
                 )}
 
+
                 <UserInputForm
                     label="Full Name"
                     type="text"
                     required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 />
 
                 <UserInputForm

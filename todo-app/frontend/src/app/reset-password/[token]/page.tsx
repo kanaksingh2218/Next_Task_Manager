@@ -1,31 +1,46 @@
 'use client';
-import { UserInputForm } from "../../Authentication/component/UserInputForm";
-import { Button } from "../../components/ui/Button";
-import { Logo } from "../../Authentication/component/Logo";
-import Link from 'next/link';
+import { UserInputForm } from "../../../Authentication/component/UserInputForm";
+import { Button } from "../../../components/ui/Button";
+import { Logo } from "../../../Authentication/component/Logo";
 import { useState } from "react";
-import { forgotPassword } from "../../Authentication/services";
+import { useRouter, useParams } from "next/navigation";
+import { resetPassword } from "../../../Authentication/services";
+import Link from 'next/link';
 
-export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState('');
+export default function ResetPasswordPage() {
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
+    const router = useRouter();
+    const params = useParams();
+    const token = params.token as string;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
         setLoading(true);
         setError('');
         setMessage('');
         try {
-            const response = await forgotPassword(email);
-            if (response.success) {
-                setMessage(response.message || 'If an account exists with this email, you will receive a password reset link.');
+            const res = await resetPassword(token, password);
+            if (res.success) {
+                setMessage('Password reset successful! Redirecting to login...');
+                setTimeout(() => {
+                    router.push('/login');
+                }, 3000);
             } else {
-                setError(response.message || 'Failed to send reset link. Please try again.');
+                setError(res.message || 'Reset failed. Token might be invalid or expired.');
             }
         } catch (err: any) {
-            setError(err.message || 'Something went wrong. Please try again.');
+            setError('Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -36,8 +51,8 @@ export default function ForgotPasswordPage() {
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
                 <div className="flex flex-col items-center">
                     <Logo />
-                    <h2 className="mt-6 text-2xl font-bold text-gray-900">Reset Password</h2>
-                    <p className="mt-2 text-sm text-gray-600">Enter your email to receive instructions</p>
+                    <h2 className="mt-6 text-2xl font-bold text-gray-900">New Password</h2>
+                    <p className="mt-2 text-sm text-gray-600">Enter your new password below</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -53,11 +68,19 @@ export default function ForgotPasswordPage() {
                     )}
 
                     <UserInputForm
-                        label="Email Address"
-                        type="email"
+                        label="New Password"
+                        type="password"
                         required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <UserInputForm
+                        label="Confirm New Password"
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                     />
 
                     <Button
@@ -65,7 +88,7 @@ export default function ForgotPasswordPage() {
                         className="w-full"
                         isLoading={loading}
                     >
-                        Send Reset Link
+                        Reset Password
                     </Button>
                 </form>
 

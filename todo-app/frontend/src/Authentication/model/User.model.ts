@@ -1,6 +1,6 @@
 export interface User {
     _id: string;
-    name: string;
+    fullName: string;
     email: string;
 }
 
@@ -10,7 +10,7 @@ export interface LoginData {
 }
 
 export interface SignupData {
-    name: string;
+    fullName: string;
     email: string;
     password: string;
 }

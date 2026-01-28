@@ -3,33 +3,42 @@ import User from '../User.model';
 
 export const registerUser = async (req: Request, res: Response) => {
     try {
-        const { name, email, password } = req.body;
+        const { fullName, email, password } = req.body;
 
-        // Check if user exists
+        // Check if user exists by email
         const userExists = await User.findOne({ email });
+
         if (userExists) {
-            return res.status(400).json({ success: false, message: 'User already exists' });
+            return res.status(400).json({
+                success: false,
+                message: 'Email already exists'
+            });
         }
 
         // Create user
         const user = await User.create({
-            name,
+            fullName,
             email,
             password
         });
 
-        console.log('User Registered:', user); // LOGGING
+        console.log('User Registered Successfully:', user._id);
 
         // Send response with token
         res.status(201).json({
             success: true,
             _id: user._id,
-            name: user.name,
+            fullName: user.fullName,
             email: user.email,
             token: user.getSignedJwtToken()
         });
 
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Server Error', error });
+    } catch (error: any) {
+        console.error('Registration Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Server Error',
+            error: process.env.NODE_ENV === 'development' ? error : undefined
+        });
     }
 };

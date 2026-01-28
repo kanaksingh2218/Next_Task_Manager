@@ -31,6 +31,24 @@ export const forgotPassword = async (email: string) => {
         },
         body: JSON.stringify({ email })
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to send reset link');
+    }
+
+    return data;
+};
+
+export const resetPassword = async (token: string, password: string) => {
+    const response = await fetch(`${API_URL}/auth/reset-password/${token}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+    });
     return response.json();
 };
 

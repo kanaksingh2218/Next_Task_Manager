@@ -1,20 +1,24 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 export interface IUser extends Document {
-    name: string;
+    fullName: string;
     email: string;
     password: string;
     createdAt: Date;
+    resetPasswordToken?: string;
+    resetPasswordExpire?: Date;
     matchPassword(enteredPassword: string): Promise<boolean>;
     getSignedJwtToken(): string;
+    getResetPasswordToken(): string;
 }
 
 const UserSchema: Schema = new Schema({
-    name: {
+    fullName: {
         type: String,
-        required: [true, 'Please add a name']
+        required: [true, 'Please add a full name']
     },
     email: {
         type: String,
@@ -34,17 +38,18 @@ const UserSchema: Schema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function (this: IUser, next: any) {
+UserSchema.pre('save', async function (this: IUser) {
     if (!this.isModified('password')) {
-        return next();
+        return;
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
 });
 
 // Match user entered password to hashed password in database
@@ -58,6 +63,23 @@ UserSchema.methods.getSignedJwtToken = function (): string {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET as string, {
         expiresIn
     });
+};
+
+// Generate and hash password token
+UserSchema.methods.getResetPasswordToken = function (): string {
+    // Generate token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Hash token and set to resetPasswordToken field
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // Set expire (10 minutes)
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
 };
 
 export default mongoose.model<IUser>('User', UserSchema);

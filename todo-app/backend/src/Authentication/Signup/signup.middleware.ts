@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
 export const validateSignup = (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, password } = req.body;
+    const { fullName, email, password } = req.body;
 
-    if (!name || !email || !password) {
-        return res.status(400).json({ success: false, message: 'Please provide name, email and password' });
+    if (!fullName || !email || !password) {
+        return res.status(400).json({ success: false, message: 'Please provide fullName, email and password' });
     }
 
     // Basic email validation

@@ -22,7 +22,7 @@ export const loginUser = async (req: Request, res: Response) => {
         const responseData = {
             success: true,
             _id: user._id,
-            name: user.name,
+            fullName: user.fullName,
             email: user.email,
             token: user.getSignedJwtToken()
         };
@@ -37,7 +37,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
     try {
-        const user = req.user;
+        const user = (req as any).user;
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server Error', error: error });

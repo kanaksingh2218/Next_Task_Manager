@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (res.success) {
                 const userObj = {
                     _id: res._id,
-                    name: res.name,
+                    fullName: res.fullName,
                     email: res.email
                 };
                 console.log('Saving User to LocalStorage:', userObj); // LOGGING
@@ -81,12 +81,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 localStorage.setItem('token', res.token);
                 localStorage.setItem('user', JSON.stringify({
                     _id: res._id,
-                    name: res.name,
+                    fullName: res.fullName,
                     email: res.email
                 }));
                 setUser({
                     _id: res._id,
-                    name: res.name,
+                    fullName: res.fullName,
                     email: res.email
                 });
                 setIsAuthenticated(true);
